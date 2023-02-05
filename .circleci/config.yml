@@ -158,11 +158,6 @@ jobs:
               --tags project=UdaPeople-0rnkb6s435fzdjlyj \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
-      - run: 
-          name: debug on failed deployement
-          command: |
-            aws cloudformation describe-stack-events --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-          when: on_fail
       - run:
           name: Ensure front-end infrastructure exist
           command: |
