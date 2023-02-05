@@ -233,7 +233,6 @@ jobs:
               curl https://kvdb.io/CfupmAdNyBBBLsv1qJD5tu/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
      # Here's where you will add some code to rollback on failure 
-     - 
 workflows:
   default:
     jobs:
