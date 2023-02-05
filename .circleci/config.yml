@@ -108,8 +108,7 @@ jobs:
       - image: "amazon/aws-cli"
     steps:
       - checkout
-      - run: sudo apt install tar
-      - run: sudo apt install gzip
+      - run: yum -y install tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
