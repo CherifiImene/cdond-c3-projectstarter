@@ -134,13 +134,13 @@ jobs:
           command: |
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:Project,Values=UdaPeople-0rnkb6s435fzdjlyj" \
+            --filters "Name=tag:project,Values=UdaPeople-0rnkb6s435fzdjlyj" \
             --output text >> ./.circleci/ansible/inventory.txt
       - run: pwd
       - persist_to_workspace:
           root: ~/
           paths:
-            - /.circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
       - destroy_stacks
   
