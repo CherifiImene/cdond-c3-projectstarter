@@ -161,7 +161,7 @@ jobs:
       - run: 
           name: debug on failed deployement
           command: |
-            aws cloudformation describe-stack-events --stack-name udapeople-backend-b43eab8
+            aws cloudformation describe-stack-events --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
           when: on_fail
       - run:
           name: Ensure front-end infrastructure exist
