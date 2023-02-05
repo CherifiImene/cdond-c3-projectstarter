@@ -9,9 +9,26 @@ orbs:
 commands:
   destroy_stacks:
     description: Destroys the environment
+    parameters:
+      when:
+        type: string
+      project_id:
+        type: string
+
     steps:
-      - run: |
-          aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:
+          name: Destroys backend stack
+          command: |
+            aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.project_id>>"
+          when: <<parameters.when>>
+      - run:
+          name: Destroys frontend stack
+          command: |
+            aws s3 rm s3://udapeople-<< parameters.id >> --recursive
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
+          when: <<parameters.when>>
+        
+
 
 jobs:
   build-frontend:
@@ -136,13 +153,14 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=UdaPeople-0rnkb6s435fzdjlyj" \
             --output text >> ./.circleci/ansible/inventory.txt
-      - run: pwd
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
-      - destroy_stacks
+      - destroy_stacks:
+          when: on_fail
+          project_id: ${CIRCLE_WORKFLOW_ID:0:7}
   
   configure-infrastructure:
     docker:
@@ -158,15 +176,18 @@ jobs:
           name: Install dependencies
           command: |
             yum -y install tar gzip
-            pip install ansible
             apk add --update ansible
+            apt-get install awscli -y
 
       - run:
           name: Configure server
           command: |
-            # Your code here
-            exit 1
-      # Here's where you will add some code to rollback on failure  
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+      # Here's where you will add some code to rollback on failure
+      - destroy_stacks:
+        when: on_fail
+        project_id: ${CIRCLE_WORKFLOW_ID:0:7} 
 
 workflows:
   default:
