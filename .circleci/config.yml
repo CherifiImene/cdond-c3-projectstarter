@@ -1,7 +1,15 @@
 version: 2.1
 defaults: &defaults
   docker:
-    - image: circleci/node:13.8.0          
+    - image: circleci/node:13.8.0   
+
+commands:
+  - destroy_stacks:
+      when: on_fail
+      command: |
+        aws cloudformation delete-stack --stack-name udapeople-backend-0rnkb6s435fzdjlyj
+        aws cloudformation delete-stack --stack-name udapeople-frontend-0rnkb6s435fzdjlyj
+
 jobs:
   build-frontend:
     <<: *defaults
@@ -69,12 +77,9 @@ jobs:
   scan-frontend:
     <<: *defaults
     steps:
-      # Checkout code from git
       - checkout
-      # Restore from cache
       - restore_cache:
           keys: [frontend-build]
-      # Your job code here
       - run:
           name: scan possible vulnerabilities in the frontend
           command: |
@@ -82,18 +87,13 @@ jobs:
               npm install
               npm audit fix --audit-level=critical --force
               npm audit fix --audit-level=critical --force
-              npm audit --audit-level=critical
-              
-
+              npm audit --audit-level=critical           
   scan-backend:
     <<: *defaults
     steps:
-      # Checkout code from git
       - checkout
-      # Restore from cache
       - restore_cache:
           keys: [backend-build]
-      # Your job code here
       - run:
           name: scan possible vulnerabilities in the backend
           command: |
@@ -102,6 +102,47 @@ jobs:
               npm audit fix --audit-level=critical --force
               npm audit fix --audit-level=critical --force
               npm audit --audit-level=critical 
+  
+  deploy-infrastructure:
+    docker:
+      - image: "amazon/aws-cli"
+    steps:
+      - checkout
+      - run: apt-get install tar
+      - run: apt-get install gzip
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=UdaPeople-0rnkb6s435fzdjlyj \
+              --stack-name "udapeople-backend-0rnkb6s435fzdjlyj" \
+              --parameter-overrides ID="0rnkb6s435fzdjlyj" 
+
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=Udapeople-0rnkb6s435fzdjlyj \
+              --stack-name "udapeople-frontend-0rnkb6s435fzdjlyj" \
+              --parameter-overrides ID="0rnkb6s435fzdjlyj"  
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Project,Values=UdaPeople-0rnkb6s435fzdjlyj" \
+            --output text >> ~/.circleci/ansible/inventory.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+      # Here's where you will add some code to rollback on failure
+      - destroy_stacks
+
+
+              
 workflows:
   default:
     jobs:
