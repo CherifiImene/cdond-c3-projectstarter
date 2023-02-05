@@ -9,7 +9,6 @@ commands:
       when: on_fail
       command: |
         aws cloudformation delete-stack --stack-name "udapeople-backend-0rnkb6s435fzdjlyj"
-        aws cloudformation delete-stack --stack-name "udapeople-frontend-0rnkb6s435fzdjlyj"
 
 jobs:
   build-frontend:
