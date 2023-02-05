@@ -5,10 +5,11 @@ defaults: &defaults
 
 commands:
   - destroy_stacks:
+      name: Destroy web application stacks
       when: on_fail
       command: |
-        aws cloudformation delete-stack --stack-name udapeople-backend-0rnkb6s435fzdjlyj
-        aws cloudformation delete-stack --stack-name udapeople-frontend-0rnkb6s435fzdjlyj
+        aws cloudformation delete-stack --stack-name "udapeople-backend-0rnkb6s435fzdjlyj"
+        aws cloudformation delete-stack --stack-name "udapeople-frontend-0rnkb6s435fzdjlyj"
 
 jobs:
   build-frontend:
@@ -116,8 +117,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=UdaPeople-0rnkb6s435fzdjlyj \
-              --stack-name "udapeople-backend-0rnkb6s435fzdjlyj" \
-              --parameter-overrides ID="0rnkb6s435fzdjlyj" 
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
 
       - run:
           name: Ensure front-end infrastructure exist
@@ -125,8 +126,8 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=Udapeople-0rnkb6s435fzdjlyj \
-              --stack-name "udapeople-frontend-0rnkb6s435fzdjlyj" \
-              --parameter-overrides ID="0rnkb6s435fzdjlyj"  
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -160,3 +161,4 @@ workflows:
       - scan-backend:
           requires:
             - build-backend
+      - deploy-infrastructure
