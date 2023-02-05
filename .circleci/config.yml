@@ -195,6 +195,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            apk add --update aws-wli
             apk add --update ansible
 
       - run:
