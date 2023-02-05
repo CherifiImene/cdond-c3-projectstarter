@@ -3,6 +3,9 @@ defaults: &defaults
   docker:
     - image: circleci/node:13.8.0   
 
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
+
 commands:
   destroy_stacks:
     description: Destroys the environment
@@ -133,13 +136,38 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Project,Values=UdaPeople-0rnkb6s435fzdjlyj" \
             --output text >> ./.circleci/ansible/inventory.txt
+      - run: pwd
       - persist_to_workspace:
           root: ~/
           paths:
-            - cdond-c3-projectstarter/.circleci/ansible/inventory.txt
+            - /.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
       - destroy_stacks
-              
+  
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["70:c2:5f:7b:31:56:83:fc:66:cf:16:54:3b:22:2f:30"] 
+      - attach_workspace:
+          at: ~/
+
+      - run:
+          name: Install dependencies
+          command: |
+            yum -y install tar gzip
+            pip install ansible
+            apk add --update ansible
+
+      - run:
+          name: Configure server
+          command: |
+            # Your code here
+            exit 1
+      # Here's where you will add some code to rollback on failure  
+
 workflows:
   default:
     jobs:
