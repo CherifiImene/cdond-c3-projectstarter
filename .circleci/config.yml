@@ -7,8 +7,8 @@ commands:
   destroy_stacks:
     description: Destroys the environment
     steps:
-      run: |
-        aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+      - run: |
+          aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
 
 jobs:
   build-frontend:
