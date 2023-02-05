@@ -108,8 +108,8 @@ jobs:
       - image: "amazon/aws-cli"
     steps:
       - checkout
-      - run: apt-get install tar
-      - run: apt-get install gzip
+      - run: sudo apt install tar
+      - run: sudo apt install gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -160,4 +160,8 @@ workflows:
       - scan-backend:
           requires:
             - build-backend
-      - deploy-infrastructure
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [test-feature-branch]
