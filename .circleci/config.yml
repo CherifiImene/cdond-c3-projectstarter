@@ -302,16 +302,14 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            # apk add --update tar
             apk add --update curl
-            # apk add --update nodejs npm
-            # apk add --update ansible
+            apk add --update nodejs npm
             python -m pip install awscli
       - run:
           name: Get backend url
