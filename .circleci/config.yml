@@ -249,6 +249,10 @@ jobs:
       - node/install:
           node-version: "13.8.0"
       - run:
+          name: Install dependencies
+          command: |
+            yum install -y unzip
+      - run:
           name: Get backend url
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances \
@@ -283,7 +287,6 @@ jobs:
           fingerprints: ["70:c2:5f:7b:31:56:83:fc:66:cf:16:54:3b:22:2f:30"] 
       - attach_workspace:
           at: ~/
-      - aws-cli/install
       - run:
           name: Install dependencies
           command: |
@@ -292,6 +295,7 @@ jobs:
             apk add --update curl
             apk add --update nodejs npm
             apk add --update ansible
+            python -m pip install awscli
       - run:
           name: Deploy backend
           command: |
