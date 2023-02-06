@@ -245,13 +245,13 @@ jobs:
       - run: yum install -y tar gzip
       - attach_workspace:
           at: ~/
-      - aws-cli/install
       - node/install:
           node-version: "13.8.0"
       - run:
           name: Install dependencies
           command: |
             yum install -y unzip
+      - aws-cli/install
       - run:
           name: Get backend url
           command: |
