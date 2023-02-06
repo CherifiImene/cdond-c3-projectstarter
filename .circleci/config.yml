@@ -6,7 +6,6 @@ defaults: &defaults
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
   node: circleci/node@5.1.0
-  ansible-playbook: orbss/ansible-playbook@0.0.5
 
 commands:
 
@@ -292,7 +291,7 @@ jobs:
             apk add --update tar
             apk add --update curl
             apk add --update nodejs npm
-      - ansible-playbook/install
+            apk add --update ansible
       - run:
           name: Deploy backend
           command: |
