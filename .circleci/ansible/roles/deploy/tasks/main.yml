@@ -10,8 +10,6 @@
       src: artifact.tar.gz
       dest: /home/ubuntu/uda_people
   
-  - name: "Start the app"
-    command: npm i && pm2 stop default && pm2 start npm -- start
   - name: "Installing Node Dependencies"
     shell: |
       cd /home/ubuntu/uda_people
