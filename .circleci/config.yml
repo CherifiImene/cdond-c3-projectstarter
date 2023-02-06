@@ -7,6 +7,7 @@ orbs:
   aws-cli: circleci/aws-cli@2.0.3
 
 commands:
+
   destroy_stacks:
     description: Destroys the environment
     parameters:
@@ -212,6 +213,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/
+      - aws-cli/install
       - run:
           name: Run migrations
           command: |
@@ -224,7 +226,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/CfupmAdNyBBBLsv1qJD5tu/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+              curl --insecure https://kvdb.io/CfupmAdNyBBBLsv1qJD5tu/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - destroy_stacks:
           when: on_fail
