@@ -1,0 +1,9 @@
+---
+  - name: "Unzip Artifacts"
+    become: true
+    unarchive:
+      src: ../../../../artifact.tar.gz
+      dst: /home/ubuntu/uda_people
+  
+  - name: "Start the app"
+    command: npm i && pm2 stop default && pm2 start npm -- start
