@@ -1,5 +1,6 @@
 ---
   - name: "Create app directory"
+    become: true
     file:
       path: /home/ubuntu/uda_people
       state: directory
@@ -11,10 +12,12 @@
       dest: /home/ubuntu/uda_people
   
   - name: "Installing Node Dependencies"
+    become: true
     shell: |
       cd /home/ubuntu/uda_people
       npm i
   - name: "Executing Node app with PM2"
+    become: true
     shell: |
       cd /home/ubuntu/uda_people/dist
       pm2 stop default
