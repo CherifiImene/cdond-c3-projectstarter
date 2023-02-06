@@ -251,7 +251,6 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y unzip
-      - aws-cli/install
       - run:
           name: Get backend url
           command: |
