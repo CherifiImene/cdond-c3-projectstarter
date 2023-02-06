@@ -238,7 +238,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-        at: ~/
+          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -257,8 +257,8 @@ jobs:
             cat frontend/.env
       - run:
           name: Deploy frontend objects
-          working_directory: ./frontend
           command: |
+            cd frontend
             npm install
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
@@ -288,6 +288,9 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
+            apk add --update tar
+            apk add --update nodejs
+
       - run:
           name: Deploy backend
           command: |
