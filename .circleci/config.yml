@@ -6,6 +6,7 @@ defaults: &defaults
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
   node: circleci/node@5.1.0
+  ansible-playbook: orbss/ansible-playbook@0.0.5
 
 commands:
 
@@ -43,7 +44,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS = $(curl --insecure https://kvdb.io/CfupmAdNyBBBLsv1qJD5tu/migration_<<parameters.id>>)
+            SUCCESS=$(curl --insecure https://kvdb.io/CfupmAdNyBBBLsv1qJD5tu/migration_<<parameters.id>>)
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -242,7 +243,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: yum install -y tar
+      - run: yum install -y tar gzip
       - attach_workspace:
           at: ~/
       - aws-cli/install
@@ -283,15 +284,15 @@ jobs:
           fingerprints: ["70:c2:5f:7b:31:56:83:fc:66:cf:16:54:3b:22:2f:30"] 
       - attach_workspace:
           at: ~/
-      - node/install:
-          node-version: "13.8.0"
+      - aws-cli/install
       - run:
           name: Install dependencies
           command: |
             # your code here
             apk add --update tar
-            npm -v
-
+            apk add --update curl
+            apk add --update nodejs npm
+      - ansible-playbook/install
       - run:
           name: Deploy backend
           command: |
