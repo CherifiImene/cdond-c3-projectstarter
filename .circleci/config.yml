@@ -233,12 +233,11 @@ jobs:
       - run: yum install -y tar gzip
       - attach_workspace:
           at: ~/
-      #- node/install:
-      #    node-version: "13.8.0"
+      - node/install:
+          node-version: "13.8.0"
       - run:
           name: Install dependencies
           command: |   
-            yum install -y nodejs npm
             yum install -y unzip
       - run:
           name: Get backend url
