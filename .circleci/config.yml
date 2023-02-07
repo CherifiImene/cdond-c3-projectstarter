@@ -356,13 +356,14 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - node/install:
-          node-version: "13.8.0"
       - run:
           name: Install dependencies
           command: |
             yum update -y
             yum install -y npm
+            yum install -y tar gzip
+      - node/install:
+          node-version: "13.8.0"
       - run:
           name: Save Old Workflow ID to kvdb.io
           command: |
