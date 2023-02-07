@@ -356,13 +356,13 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
+      - node/install:
+          node-version: "13.8.0"
       - run:
           name: Install dependencies
           command: |
-            yum update
-            yum install epel-release
-            yum install nodejs 
-            yum install npm
+            yum update -y
+            yum install -y npm
       - run:
           name: Save Old Workflow ID to kvdb.io
           command: |
@@ -388,7 +388,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Get old stack workflow id
+          name: Remove old stacks and files
           command: |
             # your code here
             export OldWorkflowID=$(aws cloudformation \
@@ -399,9 +399,7 @@ jobs:
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
               --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             echo Stack names: "${STACKS[@]}"
-      - run:
-          name: Remove old stacks and files
-          command: |
+
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
@@ -435,3 +433,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
