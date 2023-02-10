@@ -373,7 +373,7 @@ jobs:
             echo OldWorkflowID: ${OldWorkflowID}
             
             # save the old workflow id to workspace
-            echo ${OldWorkflowID} > OldWorkflowID.txt
+            curl --insecure https://kvdb.io/CfupmAdNyBBBLsv1qJD5tu/oldworkflowid  -d '${OldWorkflowID}'
             
             echo NewWorkflowID: ${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation deploy \
@@ -381,10 +381,6 @@ jobs:
               --stack-name InitialStack \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
               --tags project=udapeople
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/OldWorkflowID.txt
       # Here's where you will add some code to rollback on failure
       - destroy-environment
       - revert-migrations
@@ -403,7 +399,7 @@ jobs:
           name: Remove old stacks and files
           command: |
             # your code here
-            export OldWorkflowID=$(cat ~/project/OldWorkflowID.txt)
+            export OldWorkflowID=$(curl --insecure https://kvdb.io/CfupmAdNyBBBLsv1qJD5tu/oldworkflowid)
             echo OldWorkflowID: "${OldWorkflowID}"
 
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
